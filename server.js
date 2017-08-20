@@ -42,22 +42,42 @@ var usherSchema = mongoose.Schema({
     email: String
 });
 var Usher = mongoose.model('Usher', usherSchema);
-/* var acomodador1 = new Usher({
-    ci:16357867,
-    names: 'Prueba'
+
+// For login 
+var userSchema = mongoose.Schema({
+    user: String,
+    password: String
 })
-console.log(acomodador1.names)
-acomodador1.save(function (err, acomodador1) {
-    if (err){
-        return console.error(err);
-    };
-}); */
+var User = mongoose.model('User',userSchema);
+
 ////////////////////////////////////////////
 app.get('/', function (request, response) {
     // do something here
     response.send({response : 'hello world'})
 })
 
+// Login
+app.post('/signin', function (request, response) {
+    // do something here
+    // find the login
+    var query = User.find({ user: request.body.user }).exec(function (err, user) {
+        if (err) {
+            return handleError(err);
+        } else if (user.length > 0) {
+            if(user[0].password == request.body.password){
+                // User and password correct
+                response.send(user);
+            } else {
+                response.status(403);
+                response.send({ error: "User or password incorrect" })
+            }
+        } else {
+            response.status(403);
+            response.send({ error: "User or password incorrect" })
+        }
+    })
+
+})
 
 // Get all Ushers
 app.get('/acomodadores/getall', function (request, response) {
