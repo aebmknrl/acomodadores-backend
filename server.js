@@ -1,13 +1,16 @@
 const express = require('express');
+var cors = require('cors');
 const app = express();
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// +++++++++++++ MONGO DB ++++++++++++++
-var mongoose = require('mongoose');
+app.use(cors())
 
+
+// +++++++++++++ MONGO DB ++++++++++++++
 mongoose.connect('mongodb://localhost/acomodadoresdb', 
     {
         useMongoClient: true
@@ -68,12 +71,10 @@ app.post('/signin', function (request, response) {
                 // User and password correct
                 response.send(user);
             } else {
-                response.status(403);
-                response.send({ error: "User or password incorrect" })
+                response.status(401).send(401, { error: "User or password incorrect" })
             }
         } else {
-            response.status(403);
-            response.send({ error: "User or password incorrect" })
+            response.status(401).send({ error: "User or password incorrect" })
         }
     })
 
@@ -104,7 +105,7 @@ app.get('/acomodadores/getone/:ci', function (request, response) {
             // Uhsher found, return it
             response.send(usher);
         } else {
-            response.send({warning : "No usher was found with this CI"})
+            response.send(404,{warning : "No usher was found with this CI"})
         }
     })
 
@@ -137,8 +138,7 @@ app.post('/acomodadores/add', function (request, response) {
             return handleError(err);
         } else if (results){
             // If exists, then twrow error
-            response.status(403);
-            response.send({error: 'El número de CI ya existe'})
+            response.send(400, {error: 'El número de CI ya existe'})
         } else {
             // Else, save the new user
             newUsher.save(function (err, newUsher) {
@@ -187,7 +187,7 @@ app.put('/acomodadores/edit/:ci', function (request, response) {
                     response.send({success : "Usher was updated"});
                 } else {
                     console.log(err);
-                    response.send(404, { error: "Usher was not updated." });
+                    response.send(400, { error: "Usher was not updated." });
                 }
 
             })
