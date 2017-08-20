@@ -4,8 +4,10 @@
     "description": "app to manage acomodadores",
     "main": "index.js",
     "dependencies": {
+        "body-parser": "^1.17.2",
         "express": "~4.14.0",
-        "mongodb": "^2.2.31"
+        "mongodb": "^2.2.31",
+        "mongoose": "^4.11.7"
     },
     "devDependencies": {
         "nodemon": "^1.11.0"
